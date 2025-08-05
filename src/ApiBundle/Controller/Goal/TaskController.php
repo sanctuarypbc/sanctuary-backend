@@ -1,0 +1,352 @@
+<?php
+
+namespace App\ApiBundle\Controller\Goal;
+
+use App\ApiBundle\Service\TaskService;
+use App\ApiBundle\Service\UtilService;
+use App\Enum\CommonEnum;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Psr\Log\LoggerInterface;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Swagger\Annotations as SWG;
+
+/**
+ * Class TaskController
+ * @package App\ApiBundle\Controller\Task
+ */
+class TaskController extends AbstractController
+{
+    /**
+     * @Route(methods={"PUT"}, path="/task/{id}", name="update_task_api")
+     *
+     * @Operation(
+     *     tags={"Task"},
+     *     summary="Update task",
+     *     @SWG\Parameter(
+     *       type="string",
+     *       name="Authorization",
+     *       in="header",
+     *       required=true,
+     *       description="Bearer your_token"
+     *     ),
+     *     @SWG\Response(
+     *          response=200,
+     *          description="Success",
+     *          @SWG\Schema(
+     *              type="object",
+     *              example={"code": 200, "message" : "message", "status":"success"}
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=400,
+     *          description="Missing some required params"
+     *      ),
+     *      @SWG\Response(
+     *          response=403,
+     *          description="Invalid Token provided"
+     *      ),
+     *      @SWG\Response(
+     *          response=500,
+     *          description="Some server error"
+     *      ),
+     *     @SWG\Parameter(
+     *         name="id",
+     *         in="path",
+     *         type="integer",
+     *         required=true,
+     *         description="Id"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="body",
+     *         in="body",
+     *         required=true,
+     *         @SWG\Schema(
+     *             @SWG\Property(
+     *                  property="text",
+     *                  type="string",
+     *                  )
+     *              )
+     *     )
+     * )
+     *
+     * @param $id
+     * @param Request $request
+     * @param TaskService $taskService
+     * @param UtilService $utilService
+     * @param LoggerInterface $clientApiLogger
+     * @return JsonResponse
+     */
+    public function editTaskAction(
+        $id,
+        Request $request,
+        TaskService $taskService,
+        UtilService $utilService,
+        LoggerInterface $clientApiLogger
+    ) {
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (empty($data['text'])) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, "Text is required.");
+            }
+
+            $result = $taskService->updateTask($this->getUser(), (int) $id, $data);
+
+            if ($result !== true) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, $result);
+            }
+
+            return $utilService->makeResponse(
+                Response::HTTP_OK,
+                "Task updated successfully."
+            );
+        } catch (\Exception $exception) {
+            $clientApiLogger->error('[update_task_api]: ' . $exception->getMessage());
+            return $utilService->makeResponse(Response::HTTP_INTERNAL_SERVER_ERROR, CommonEnum::INTERNAL_SERVER_ERROR_TEXT);
+        }
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/task", name="create_task_api")
+     *
+     * @Operation(
+     *     tags={"Task"},
+     *     summary="Create task",
+     *     @SWG\Parameter(
+     *       type="string",
+     *       name="Authorization",
+     *       in="header",
+     *       required=true,
+     *       description="Bearer your_token"
+     *     ),
+     *     @SWG\Response(
+     *          response=200,
+     *          description="Success",
+     *          @SWG\Schema(
+     *              type="object",
+     *              example={"code": 200, "data": "{'token' : 'token here', 'id' : 'id here'}", "message" : "message", "status":"success"}
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=400,
+     *          description="Missing some required params"
+     *      ),
+     *      @SWG\Response(
+     *          response=403,
+     *          description="Invalid Token provided"
+     *      ),
+     *      @SWG\Response(
+     *          response=500,
+     *          description="Some server error"
+     *      ),
+     *      @SWG\Parameter(
+     *         name="body",
+     *         in="body",
+     *         required=true,
+     *         @SWG\Schema(
+     *             @SWG\Property(
+     *                  property="text",
+     *                  type="string",
+     *                  ),
+     *         @SWG\Property(
+     *                  property="goal_id",
+     *                  type="integer",
+     *                  )
+     *              ),
+     *     )
+     * )
+     *
+     * @param Request $request
+     * @param TaskService $taskService
+     * @param UtilService $utilService
+     * @param LoggerInterface $clientApiLogger
+     * @return JsonResponse
+     */
+    public function createTaskAction(
+        Request $request,
+        TaskService $taskService,
+        UtilService $utilService,
+        LoggerInterface $clientApiLogger
+    ) {
+        try {
+            $data = json_decode($request->getContent(), true);
+
+            if (empty($data['text']) || empty($data['goal_id'])) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, "Required parameters missing.");
+            }
+
+            $result = $taskService->createTask($this->getUser(),  $data);
+            if ($result !== true) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, $result);
+            }
+
+            return $utilService->makeResponse(
+                Response::HTTP_OK,
+                "Task created successfully.",
+                null
+            );
+        } catch (Exception $exception) {
+            $clientApiLogger->error('[create_task_api]: ' . $exception->getMessage());
+            return $utilService->makeResponse(Response::HTTP_INTERNAL_SERVER_ERROR, CommonEnum::INTERNAL_SERVER_ERROR_TEXT);
+        }
+    }
+
+    /**
+     * @Route(methods={"DELETE"}, path="/task/{id}", name="delete_task_api")
+     *
+     * @Operation(
+     *     tags={"Task"},
+     *     summary="Delete task",
+     *     @SWG\Parameter(
+     *       type="string",
+     *       name="Authorization",
+     *       in="header",
+     *       required=true,
+     *       description="Bearer your_token"
+     *     ),
+     *     @SWG\Response(
+     *          response=200,
+     *          description="Success",
+     *          @SWG\Schema(
+     *              type="object",
+     *              example={"code": 200, "data": "{'token' : 'token here', 'id' : 'id here'}", "message" : "message", "status":"success"}
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=400,
+     *          description="Missing some required params"
+     *      ),
+     *      @SWG\Response(
+     *          response=403,
+     *          description="Invalid Token provided"
+     *      ),
+     *      @SWG\Response(
+     *          response=500,
+     *          description="Some server error"
+     *      ),
+     *      @SWG\Parameter(
+     *         name="id",
+     *         in="path",
+     *         type="integer",
+     *         required=true,
+     *         description="Id"
+     *      ),
+     * )
+     *
+     * @param $id
+     * @param TaskService $taskService
+     * @param UtilService $utilService
+     * @param LoggerInterface $clientApiLogger
+     * @return JsonResponse
+     */
+    public function deleteTaskAction(
+        $id,
+        TaskService $taskService,
+        UtilService $utilService,
+        LoggerInterface $clientApiLogger
+    ) {
+        try {
+            $result = $taskService->deleteTask($this->getUser(), (int) $id);
+            if ($result !== true) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, $result);
+            }
+
+            return $utilService->makeResponse(
+                Response::HTTP_OK,
+                "Task deleted successfully.",
+                null
+            );
+        } catch (Exception $exception) {
+            $clientApiLogger->error('[delete_task_api]: ' . $exception->getMessage());
+            return $utilService->makeResponse(Response::HTTP_INTERNAL_SERVER_ERROR, CommonEnum::INTERNAL_SERVER_ERROR_TEXT);
+        }
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/task", name="get_task_api")
+     *
+     * @Operation(
+     *     tags={"Task"},
+     *     summary="Get task",
+     *     @SWG\Parameter(
+     *       type="string",
+     *       name="Authorization",
+     *       in="header",
+     *       required=true,
+     *       description="Bearer your_token"
+     *     ),
+     *     @SWG\Response(
+     *          response=200,
+     *          description="Success",
+     *          @SWG\Schema(
+     *              type="object",
+     *              example={"code": 200, "data": "{'token' : 'token here', 'id' : 'id here'}", "message" : "message", "status":"success"}
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=400,
+     *          description="Missing some required params"
+     *      ),
+     *      @SWG\Response(
+     *          response=403,
+     *          description="Invalid Token provided"
+     *      ),
+     *      @SWG\Response(
+     *          response=500,
+     *          description="Some server error"
+     *      ),
+     *      @SWG\Parameter(
+     *         name="goal_id",
+     *         in="query",
+     *         type="integer",
+     *         required=true,
+     *         description="Goal id"
+     *      ),
+     *      @SWG\Parameter(
+     *         name="id",
+     *         in="query",
+     *         type="integer",
+     *         required=false,
+     *         description="Id"
+     *      )
+     * )
+     *
+     * @param Request $request
+     * @param TaskService $taskService
+     * @param UtilService $utilService
+     * @param LoggerInterface $clientApiLogger
+     * @return JsonResponse
+     */
+    public function getTaskAction(
+        Request $request,
+        TaskService $taskService,
+        UtilService $utilService,
+        LoggerInterface $clientApiLogger
+    ) {
+        try {
+            $data = $request->query->all();
+            if (empty($data['goal_id'])) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, "Goal id is required.");
+            }
+
+            $result = $taskService->getTasks($this->getUser(), $data);
+
+            if (!is_array($result)) {
+                return $utilService->makeResponse(Response::HTTP_BAD_REQUEST, $result);
+            }
+
+            return $utilService->makeResponse(
+                Response::HTTP_OK,
+                "",
+                $result
+            );
+        } catch (Exception $exception) {
+            $clientApiLogger->error('[get_task_api]: ' . $exception->getMessage());
+            return $utilService->makeResponse(Response::HTTP_INTERNAL_SERVER_ERROR, CommonEnum::INTERNAL_SERVER_ERROR_TEXT);
+        }
+    }
+}

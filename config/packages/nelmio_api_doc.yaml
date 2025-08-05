@@ -1,0 +1,77 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Sanctuary
+            version: 1.0.0
+        paths:
+            /oauth/v2/token:
+                post:
+                    tags:
+                        - oAuth
+                    description: Authorises client via client_id and client_secret and returns token
+                    security: []
+                    consumes:
+                        - application/x-www-form-urlencoded
+                    produces:
+                        - application/json
+                    parameters:
+                        - name: client_id
+                          description: Client public token
+                          in: formData
+                          type: string
+                          required: true
+                        - name: client_secret
+                          description: Client secret token
+                          in: formData
+                          type: string
+                          required: true
+                        - name: grant_type
+                          in: formData
+                          required: true
+                          type: string
+                          default: client_credentials
+                          description: Allowed types => client_credentials, password, refresh_token
+                        - name: username
+                          in: formData
+                          required: false
+                          type: string
+                          description: username
+                        - name: password
+                          in: formData
+                          required: false
+                          type: string
+                          format: password
+                          description: password
+                        - name: refresh_token
+                          in: formData
+                          required: false
+                          type: string
+                          description: Refresh token
+                    responses:
+                        '200':
+                            description: Verified successful
+                            schema:
+                                $ref: '#definitions/access_token'
+                        '400':
+                            description: Login error
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: invalid_client
+                                    error_description:
+                                        type: string
+                                        example: The client credentials are invalid
+
+        parameters:
+            authorization:
+                name: 'Authorization'
+                description: 'Bearer authorization'
+                default: 'Bearer NzAyOGNmMjUJRzk0MTQyYWRjNmE4ODA1NGQ5YTkyOWYwNjY4MThkNDk0N2VlMDg0YmZjMjVhNDgwYjc5NDNjMQ'
+                required: true
+                in: 'header'
+                type: 'string'
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

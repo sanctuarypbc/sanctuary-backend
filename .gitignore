@@ -1,0 +1,33 @@
+# Symfony logs and cache
+/var/log/
+/var/cache/
+
+# Ignore environment files
+.env
+.env.local
+.env.*.local
+
+# Ignore vendor (use Composer)
+/vendor/
+
+# Ignore node_modules
+/node_modules/
+
+# Ignore IDE files
+*.iml
+.idea/
+.vscode/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore test output
+/phpunit.xml
+.phpunit.result.cache
+
+# Ignore user uploads (optional)
+/public/uploads/
+
+# Ignore composer lock file (optional)
+/composer.lock

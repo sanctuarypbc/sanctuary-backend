@@ -1,0 +1,2 @@
+monolog:
+    channels: ['client', 'advocate', 'first_responder', 'admin', 'facility']

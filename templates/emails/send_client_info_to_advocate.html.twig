@@ -1,0 +1,10 @@
+<h3>Sanctuary</h3>
+
+Hi! <br> A new Client <strong>{{ client.firstName }}</strong> has been assigned to you.<br>
+
+{% if facilityData %}
+    Here is the Facility detail: <br>
+    <strong>Facility name: </strong>{{ facilityData.name }}<br>
+    <strong>Facility phone: </strong>{{ facilityData.user.phone }}<br>
+{% endif %}
+Thanks!

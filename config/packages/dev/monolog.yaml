@@ -1,0 +1,49 @@
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: ["!event"]
+        client_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/client.log"
+            level: debug
+            channels: ["client"]
+            max_files: 15
+        advocate_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/advocate.log"
+            level: debug
+            channels: ["advocate"]
+            max_files: 15
+        first_responder_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/first_responder.log"
+            level: debug
+            channels: ["first_responder"]
+            max_files: 15
+        admin_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/admin.log"
+            level: debug
+            channels: ["admin"]
+            max_files: 15
+        facility_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/facility.log"
+            level: debug
+            channels: ["facility"]
+            max_files: 15
+        # uncomment to get logging in your browser
+        # you may have to allow bigger header sizes in your Web server configuration
+        #firephp:
+        #    type: firephp
+        #    level: info
+        #chromephp:
+        #    type: chromephp
+        #    level: info
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!console"]

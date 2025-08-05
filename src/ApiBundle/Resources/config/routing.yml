@@ -1,0 +1,138 @@
+api_activity_log_list:
+  resource: App\ApiBundle\Controller\ActivityLog\ActivityLogApiController
+  prefix: user
+
+api_advocate:
+  resource: App\ApiBundle\Controller\Advocate\AdvocateApiController
+  prefix: user
+
+api_advocate_service_type:
+  resource: App\ApiBundle\Controller\Advocate\AdvocateServiceTypeApiController
+  prefix: user
+
+api_client:
+  resource: App\ApiBundle\Controller\Client\ClientApiController
+  prefix: user
+
+api_client_employment_status:
+  resource: App\ApiBundle\Controller\Client\ClientEmploymentStatusApiController
+  prefix: user
+
+api_client_occupation:
+  resource: App\ApiBundle\Controller\Client\ClientOccupationApiController
+  prefix: user
+
+api_client_status:
+  resource: App\ApiBundle\Controller\Client\ClientStatusApiController
+  prefix: user
+
+api_client_type:
+  resource: App\ApiBundle\Controller\Client\ClientTypeApiController
+  prefix: user
+
+api_facility:
+  resource: App\ApiBundle\Controller\Facility\FacilityApiController
+  prefix: user
+
+api_facility_inventory:
+  resource: App\ApiBundle\Controller\Facility\FacilityInventoryController
+  prefix: user
+
+api_facility_inventory_type:
+  resource: App\ApiBundle\Controller\Facility\FacilityInventoryTypeController
+  prefix: user
+
+api_facility_type:
+  resource: App\ApiBundle\Controller\Facility\FacilityTypeApiController
+  prefix: user
+
+api_first_responder:
+  resource: App\ApiBundle\Controller\FirstResponder\FirstResponderApiController
+  prefix: user
+
+api_first_responder_type:
+  resource: App\ApiBundle\Controller\FirstResponder\FirstResponderTypeApiController
+  prefix: user
+
+api_language:
+  resource: App\ApiBundle\Controller\Language\LanguageApiController
+  prefix: user
+
+api_organization_stats:
+  resource: App\ApiBundle\Controller\Organization\OrganizationApiController
+  prefix: user
+
+api_organization_client:
+  resource: App\ApiBundle\Controller\Organization\OrganizationApiController
+  prefix: user
+
+api_organization:
+  resource: App\ApiBundle\Controller\Organization\OrganizationApiController
+  prefix: user
+
+api_user:
+  resource: App\ApiBundle\Controller\User\UserApiController
+  prefix: user
+
+api_user_settings:
+  resource: App\ApiBundle\Controller\UserApiController
+
+api_client_dependent:
+  resource: App\ApiBundle\Controller\Dependent\ClientDependentApiController
+  prefix: user
+
+api_client_inventory_assignment:
+  resource: App\ApiBundle\Controller\InventoryAssignment\InventoryAssignmentApiController
+  prefix: user
+
+api_client_onboarding:
+  resource: App\ApiBundle\Controller\User\SecurityController
+  prefix: client
+
+api_request:
+  resource: App\ApiBundle\Controller\Request\RequestController
+  prefix: user
+
+api_client_request:
+  resource: App\ApiBundle\Controller\Request\ClientRequestController
+  prefix: user
+
+api_client_request_comment:
+  resource: App\ApiBundle\Controller\Request\ClientRequestCommentController
+  prefix: user
+
+api_goal:
+  resource: App\ApiBundle\Controller\Goal\GoalController
+  prefix: user
+
+api_task:
+  resource: App\ApiBundle\Controller\Goal\TaskController
+  prefix: user
+
+api_client_goal:
+  resource: App\ApiBundle\Controller\Goal\ClientGoalController
+  prefix: user
+
+api_newsfeed:
+  resource: App\ApiBundle\Controller\Newsfeed\NewsfeedAPIController
+  prefix: user
+
+api_sms:
+  resource: App\ApiBundle\Controller\Sms\SmsAPIController
+  prefix: user
+
+api_covid_question:
+  resource: App\ApiBundle\Controller\Covid\CovidQuestionController
+  prefix: user
+
+api_covid_answer:
+  resource: App\ApiBundle\Controller\Covid\CovidAnswerController
+  prefix: user
+
+api_wellness_tip:
+  resource: App\ApiBundle\Controller\WellnessTip\WellnessTipApiController
+  prefix: user
+
+api_booking:
+  resource: App\ApiBundle\Controller\Booking\BookingApiController
+  prefix: user

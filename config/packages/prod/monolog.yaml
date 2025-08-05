@@ -1,0 +1,53 @@
+monolog:
+    handlers:
+        main:
+            type: fingers_crossed
+            action_level: error
+            handler: nested
+            excluded_http_codes: [404, 405]
+        nested:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine"]
+        deprecation:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+        deprecation_filter:
+            type: filter
+            handler: deprecation
+            max_level: info
+            channels: ["php"]
+        client_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/client.log"
+            level: notice
+            channels: ["client"]
+            max_files: 15
+        advocate_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/advocate.log"
+            level: notice
+            channels: ["advocate"]
+            max_files: 15
+        first_responder_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/first_responder.log"
+            level: notice
+            channels: ["first_responder"]
+            max_files: 15
+        admin_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/admin.log"
+            level: notice
+            channels: ["admin"]
+            max_files: 15
+        facility_api:
+            type:  rotating_file
+            path: "%kernel.logs_dir%/facility.log"
+            level: notice
+            channels: ["facility"]
+            max_files: 15

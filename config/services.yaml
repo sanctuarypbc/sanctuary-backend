@@ -1,0 +1,50 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    SITE_URL: "%env(SITE_URL)%"
+    FRONTEND_SITE_URL: "%env(FRONTEND_SITE_URL)%"
+    GOOGLE_API_KEY: "%env(GOOGLE_API_KEY)%"
+    twilio-id: "%env(TWILIO_ID)%"
+    twilio-secret: "%env(TWILIO_SECRET)%"
+    twilio-from: "%env(TWILIO_FROM)%"
+    special-client-id: "%env(SPECIAL_CLIENT_ID)%"
+    special-sms-hash: "%env(SPECIAL_SMS_HASH)%"
+    s3-bucket: "%env(AWS_S3_BUCKET)%"
+    app_url: "%env(APP_URL)%"
+    mailjet_api_key: "%env(MAILJET_APIKEY_PUBLIC)%"
+    mailjet_api_secret: "%env(MAILJET_APIKEY_PRIVATE)%"
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+        bind:
+            $clientApiLogger: '@monolog.logger.client'
+            $advocateApiLogger: '@monolog.logger.advocate'
+            $firstResponderApiLogger: '@monolog.logger.first_responder'
+            $adminApiLogger: '@monolog.logger.admin'
+            $facilityApiLogger: '@monolog.logger.facility'
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Repository/AbstractRepository.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    FOS\UserBundle\Model\UserManager: '@fos_user.user_manager.default'
+    Symfony\Component\Security\Core\Encoder\EncoderFactory: '@security.encoder_factory.generic'
+    FOS\OAuthServerBundle\Entity\AccessTokenManager: '@fos_oauth_server.access_token_manager'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
